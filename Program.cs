@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace CardGame
 {
@@ -118,13 +117,6 @@ namespace CardGame
             { Console.WriteLine(player); }
 
 
-            // next steps
-            // 1. define game logic
-            //  a. bets -> bet value and trump suit decision
-            //  b. play round -> high card win, or highest trump, keep track of points
-            //  c. calculate ending points per team
-
-
             Console.WriteLine("\n#########################\n");
 
             List<Card> trick = new List<Card>();
@@ -142,10 +134,6 @@ namespace CardGame
             Console.WriteLine(cardwinner);
 
             Console.WriteLine("\n#########################\n");
-            
-
-            //Card winner = TrickWinner(deck[1], deck[2], deck[3], deck[4]);
-            //Console.WriteLine(winner);
 
             
 
@@ -165,21 +153,18 @@ namespace CardGame
             }
 
 
-            //string BiddingRound(int player1Bid, int player2Bid, int player3Bid, int player4Bid)
-            //{
-
-            //    return player;
-
-            //}
-
 
             // need to fix this, want to return the Card object, not the number
-            Card TrickWinner(Card player1Card, Card player2Card, Card player3Card, Card player4Card)
+            Card TrickWinner(Card player1Card, Card player2Card, Card player3Card, Card player4Card) 
             {
+                List<Card> trick = new List<Card>();
+                trick.Add(player1Card);
+                trick.Add(player2Card);
+                trick.Add(player3Card);
+                trick.Add(player4Card);
                 int maxVal = trick.Max(x => x.cardFaceValue);
                 Card maxCard = trick.First(x => x.cardFaceValue == maxVal);
                 return maxCard;
-            }
 
             Console.ReadKey();
         }
@@ -206,9 +191,3 @@ namespace CardGame
         }
     }
 }
-
-// Questions pour Professor sensei Marc
-// 1. console app then unity?
-// 2. github, milestone/versions for subsections in code??
-// 3. where to place ShuffleDeck() method?
-// 4. can use enum to rank card high card ranking or create a cardFaceValue field or just use cardface as high card
