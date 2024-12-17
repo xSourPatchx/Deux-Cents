@@ -60,10 +60,8 @@ namespace CardGame
             deck.Add(new Card("A", "spades", 10, 10));
 
 
-
             // disp deck of cards
-            foreach (Card card in deck)
-            { Console.WriteLine(card); }
+            foreach (Card card in deck) { Console.WriteLine(card); }
 
             Console.WriteLine("\n#########################\n");
 
@@ -72,49 +70,44 @@ namespace CardGame
             ShuffleDeck();
 
             // disp deck of cards
-            foreach (Card card in deck)
-            { Console.WriteLine(card); }
+            foreach (Card card in deck) { Console.WriteLine(card); }
 
             Console.WriteLine("\n#########################\n");
 
 
-            List<Card> player1 = new List<Card>();
-            List<Card> player2 = new List<Card>();
-            List<Card> player3 = new List<Card>();
-            List<Card> player4 = new List<Card>();
+            List<Card> playerOne = new List<Card>();
+            List<Card> playerTwo = new List<Card>();
+            List<Card> playerThree = new List<Card>();
+            List<Card> playerFour = new List<Card>();
 
 
             for (int i = 0; i < (deck.Count); i += 4)
             {
-                player1.Add(deck[i]);
-                player2.Add(deck[i + 1]);
-                player3.Add(deck[i + 2]);
-                player4.Add(deck[i + 3]);
+                playerOne.Add(deck[i]);
+                playerTwo.Add(deck[i + 1]);
+                playerThree.Add(deck[i + 2]);
+                playerFour.Add(deck[i + 3]);
             }
 
             Console.WriteLine("\n#########################\n");
 
-            // disp player1 hand
-            foreach (Card player in player1)
-            {  Console.WriteLine(player); }
+            // disp playerOne hand
+            foreach (Card player in playerOne){ Console.WriteLine($"Player One Hand:\n {player}"); }
 
             Console.WriteLine("\n#########################\n");
 
-            // disp player1 hand
-            foreach (Card player in player2)
-            { Console.WriteLine(player); }
+            // disp playerOne hand
+            foreach (Card player in playerTwo) { Console.WriteLine($"Player Two Hand:\n {player}"); }
 
             Console.WriteLine("\n#########################\n");
 
-            // disp player1 hand
-            foreach (Card player in player3)
-            { Console.WriteLine(player); }
+            // disp playerOne hand
+            foreach (Card player in playerThree) { Console.WriteLine($"Player Three Hand:\n {player}"); }
 
             Console.WriteLine("\n#########################\n");
 
-            // disp player1 hand
-            foreach (Card player in player4)
-            { Console.WriteLine(player); }
+            // disp playerOne hand
+            foreach (Card player in playerFour) { Console.WriteLine($"Player Four Hand:\n {player}"); }
 
 
             Console.WriteLine("\n#########################\n");
@@ -125,19 +118,80 @@ namespace CardGame
                 trick.Add(deck[i]);
             }
 
-            foreach (Card card in trick)
-            { Console.WriteLine(card); }
+            foreach (Card card in trick) { Console.WriteLine(card); }
 
             Console.WriteLine("\n#########################\n");
 
-            Card cardwinner = TrickWinner(trick[0], trick[1], trick[2], trick[3]);
-            Console.WriteLine(cardwinner);
+            Card cardwinner = TrickWinner(trick[0], trick[1], trick[2], trick[3]); // test
+            Console.WriteLine(cardwinner); // test
 
             Console.WriteLine("\n#########################\n");
 
             
+            /* BETTING ROUND SECTION */
+            List<string> players = new List<string> { "Player One", "Player Two", "Player Three", "Player Four" };
+            List<int> bets = new List<int>(); // store bets
+            int passCount = 0;
+            bool bettingRoundEnded = false;
+
+            while (!bettingRoundEnded)
+            {
+                for (int i = 0; i < (players.Count); i++)
+                {
+                    if (bets.Count > i && bets[i] == -1)
+                    { continue; }
+
+                    Console.WriteLine($"\n{ players[i] }, enter a bet (between 50-100, intervals of 5) or 'pass': ");
+                    string input = Console.ReadLine().ToLower();
+
+                    if (input == "pass")
+                    {
+                        Console.WriteLine($"{players[i]} passed");
+                        if (bets.Count <= i)
+                            bets.Add(-1);
+                        else
+                            bets[i] = -1;
+                        passCount++;
+                    }
+                    else if (int.TryParse(input, out int bet))
+                    {
+                        if (bet >= 50 && bet <= 100 && bet % 5 == 0 && !bets.Contains(bet))
+                        {   
+                            if (bets.Count <= i)
+                                bets.Add(bet);
+                            else
+                                bets[i] = bet;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid bet");
+                            i--;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input");
+                        i--;
+                    }
+
+                    if (passCount >= 3)
+                    {
+                        Console.WriteLine("Betting round ends");
+                        bettingRoundEnded = true;
+                    }
+                }
+            }
+
+            Console.WriteLine("\nBetting round complete, here are the results:");
+            for (int i = 0; i < players.Count; i++)
+            {
+                Console.WriteLine($"{players[i]} : {bets[i]}");
+            }
 
 
+
+            
+            // Shuffle deck method
             void ShuffleDeck()
             {
                 int n = 0;
@@ -152,25 +206,24 @@ namespace CardGame
                 }
             }
 
-
-
-            // need to fix this, want to return the Card object, not the number
-            Card TrickWinner(Card player1Card, Card player2Card, Card player3Card, Card player4Card) 
+            // Trick winner method
+            Card TrickWinner(Card playerOneCard, Card playerTwoCard, Card playerThreeCard, Card playerFourCard) 
             {
                 List<Card> trick = new List<Card>();
-                trick.Add(player1Card);
-                trick.Add(player2Card);
-                trick.Add(player3Card);
-                trick.Add(player4Card);
+                trick.Add(playerOneCard);
+                trick.Add(playerTwoCard);
+                trick.Add(playerThreeCard);
+                trick.Add(playerFourCard);
                 int maxVal = trick.Max(x => x.cardFaceValue);
                 Card maxCard = trick.First(x => x.cardFaceValue == maxVal);
                 return maxCard;
 
+                
             Console.ReadKey();
         }
-
     }
 
+    // class of cards
     class Card
     {
         public string cardFace; // 5, 6, 7, 8, 9, 10, J, Q, K, A
