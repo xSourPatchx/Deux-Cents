@@ -177,11 +177,24 @@ namespace CardGame
                     if (passCount >= 3)
                     {
                         Console.WriteLine("Betting round ends");
-                        bettingRoundEnded = true;
+                        
+                        // inserting default bet of 50 to player 4 since all prior players passed.
+                        if (bets.Count == 4) 
+                        {
+                            bettingRoundEnded = true;
+                            break;
+                        }
+                        else 
+                        {
+                            bets.Add(50);
+                            bettingRoundEnded = true;
+                            break;
+                        }
                     }
                 }
             }
 
+            // show betting results
             Console.WriteLine("\nBetting round complete, here are the results:");
             for (int i = 0; i < players.Count; i++)
             {
