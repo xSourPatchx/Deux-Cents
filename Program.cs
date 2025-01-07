@@ -117,17 +117,17 @@ namespace CardGame
             List<int> bets = new List<int>(); // store bets
             int passCount = 0;
             bool bettingRoundEnded = false;
-
+    
             while (!bettingRoundEnded)
             {
                 for (int i = 0; i < (players.Count); i++)
                 {
                     if (bets.Count > i && bets[i] == -1)
                     { continue; }
-
+    
                     Console.WriteLine($"{players[i]}, enter a bet (between 50-100, intervals of 5) or 'pass': ");
                     string input = Console.ReadLine().ToLower();
-
+    
                     if (input == "pass")
                     {
                         Console.WriteLine($"{players[i]} passed\n");
@@ -139,13 +139,42 @@ namespace CardGame
                     }
                     else if (int.TryParse(input, out int bet))
                     {
-                        if (bet >= 50 && bet <= 100 && bet % 5 == 0 && !bets.Contains(bet))
+                        if (bet >= 50 && bet < 100 && bet % 5 == 0 && !bets.Contains(bet))
                         {
                             if (bets.Count <= i)
                                 bets.Add(bet);
                             else
                                 bets[i] = bet;
                             Console.WriteLine();
+                        }
+                        else if (bet == 100)
+                        {
+                            if (passCount == 0)
+                            {
+                                bets.Add(bet);
+                                bets.Add(-1);
+                                bets.Add(-1);
+                                bets.Add(-1);
+                                bettingRoundEnded = true;
+                                break;
+                            }
+                            else if (passCount == 1)
+                            {
+                                bets.Add(bet);
+                                bets.Add(-1);
+                                bets.Add(-1);
+                                bettingRoundEnded = true;
+                                break;
+                            }
+                            else if (passCount == 2)
+                            {  
+                                bets.Add(bet);
+                                bets.Add(-1);
+                                bettingRoundEnded = true;
+                                break;
+                            }
+                            else
+                                continue;
                         }
                         else
                         {
@@ -158,7 +187,7 @@ namespace CardGame
                         Console.WriteLine("Invalid input");
                         i--;
                     }
-
+    
                     if (passCount >= 3)
                     {
                         Console.WriteLine("Betting round ends");
@@ -177,7 +206,7 @@ namespace CardGame
                     }
                 }
             }
-
+    
             // show betting results
             Console.WriteLine("\nBetting round complete, here are the results:");
             for (int i = 0; i < players.Count; i++)
