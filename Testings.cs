@@ -7,29 +7,34 @@ class BettingGame
     {
         int totalPlayers = 4;
         List<string> players = new List<string> { "Player 1", "Player 2", "Player 3", "Player 4" };
-        List<int> bets = new List<int>(new int[totalPlayers]); // Tracks bets (-1 = not acted, 0 = passed, otherwise = bet amount)
+        List<int> bets = new List<int>(new int[totalPlayers]); // Tracks current bets (-1 = no action, 0 = passed, otherwise = bet amount)
         HashSet<int> placedBets = new HashSet<int>(); // Tracks unique bets
+        HashSet<int> activePlayers = new HashSet<int>(); // Tracks players who can still act
+        bool[] hasBet = new bool[totalPlayers]; // Tracks if a player has ever placed a bet
         int passCount = 0; // Tracks players who passed
         bool bettingEnded = false; // Flag for end of betting
 
-        // Initialize bets to -1 (no action yet)
-        for (int i = 0; i < totalPlayers; i++) bets[i] = -1;
+        // Initialize bets and active players
+        for (int i = 0; i < totalPlayers; i++)
+        {
+            bets[i] = -1;
+            activePlayers.Add(i);
+        }
 
         Console.WriteLine("Welcome to the Betting Round!");
         Console.WriteLine("Players can bet between 50 and 100 (in intervals of 5), or choose to pass.\n");
 
         while (!bettingEnded)
         {
-            for (int currentPlayerIndex = 0; currentPlayerIndex < totalPlayers; currentPlayerIndex++)
+            // Iterate through active players
+            List<int> currentRoundPlayers = new List<int>(activePlayers); // Copy to avoid modification during iteration
+            foreach (int currentPlayerIndex in currentRoundPlayers)
             {
-                // Skip players who have already passed
-                if (bets[currentPlayerIndex] == 0) continue;
+                Console.WriteLine($"\n{players[currentPlayerIndex]}'s turn:");
+                bool validInput = false;
 
-                bool validInput = false; // Flag to track valid input from the current player
-
-                while (!validInput) // Re-prompt the current player until valid input is provided
+                while (!validInput)
                 {
-                    Console.WriteLine($"\n{players[currentPlayerIndex]}'s turn:");
                     Console.WriteLine("Enter a bet (50-100, intervals of 5) or 'pass': ");
                     string input = Console.ReadLine()?.Trim().ToLower();
 
@@ -37,11 +42,12 @@ class BettingGame
                     {
                         Console.WriteLine($"{players[currentPlayerIndex]} passed.");
                         bets[currentPlayerIndex] = 0; // Mark as passed
+                        activePlayers.Remove(currentPlayerIndex); // Remove from active players
                         passCount++;
-                        validInput = true; // End current player's turn
+                        validInput = true;
 
-                        // End the betting round if three players have passed
-                        if (passCount == 3)
+                        // End the betting round if three players pass
+                        if (passCount == totalPlayers - 1)
                         {
                             Console.WriteLine("Three players have passed. Betting round ends.");
                             bettingEnded = true;
@@ -55,9 +61,10 @@ class BettingGame
                             Console.WriteLine($"{players[currentPlayerIndex]} bets {bet}.");
                             bets[currentPlayerIndex] = bet; // Record the bet
                             placedBets.Add(bet); // Track the bet as placed
-                            validInput = true; // End current player's turn
+                            hasBet[currentPlayerIndex] = true; // Mark as having bet
+                            validInput = true;
 
-                            // End betting round if a player bets 100
+                            // End the betting round if a player bets 100
                             if (bet == 100)
                             {
                                 Console.WriteLine("A player has bet 100. Betting round ends.");
@@ -75,12 +82,12 @@ class BettingGame
                     }
                 }
 
-                // Check if betting should end after each player's turn
+                // Stop iterating if the betting round has ended
                 if (bettingEnded) break;
             }
 
-            // Check if all remaining players have passed
-            if (!bettingEnded && passCount == totalPlayers - 1)
+            // End the betting round if all active players have acted in this round
+            if (activePlayers.Count == 1)
             {
                 Console.WriteLine("Only one player remains. Betting round ends.");
                 bettingEnded = true;
@@ -91,7 +98,16 @@ class BettingGame
         Console.WriteLine("\nBetting Round Complete! Results:");
         for (int i = 0; i < totalPlayers; i++)
         {
-            string result = bets[i] == 0 ? "Passed" : (bets[i] == -1 ? "No Action" : $"Bet {bets[i]}");
+            string result;
+            if (bets[i] == 0 || bets[i] == -1)
+            {
+                result = hasBet[i] ? "Passed after betting" : "Passed"; // Combine "No Action" and "Passed"
+            }
+            else
+            {
+                result = $"Bet {bets[i]}";
+            }
+
             Console.WriteLine($"{players[i]}: {result}");
         }
     }
