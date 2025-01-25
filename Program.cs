@@ -109,25 +109,25 @@ namespace CardGame
 
 
             /* SECTION 2: BETTING ROUND */ // should make this a method
-
             Console.WriteLine("Betting round\n");
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             List<string> players = new List<string> { "Player One", "Player Two", "Player Three", "Player Four" };
             List<int> bets = new List<int>(); // store bets
+            bool[] hasBet = new bool[players.Count]; // track if a player has ever place a bet
             int passCount = 0;
             bool bettingRoundEnded = false;
-    
+
             while (!bettingRoundEnded)
             {
                 for (int i = 0; i < (players.Count); i++)
                 {
                     if (bets.Count > i && bets[i] == -1)
                     { continue; }
-    
+
                     Console.WriteLine($"{players[i]}, enter a bet (between 50-100, intervals of 5) or 'pass': ");
                     string input = Console.ReadLine().ToLower();
-    
+
                     if (input == "pass")
                     {
                         Console.WriteLine($"{players[i]} passed\n");
@@ -142,39 +142,16 @@ namespace CardGame
                         if (bet >= 50 && bet < 100 && bet % 5 == 0 && !bets.Contains(bet))
                         {
                             if (bets.Count <= i)
+                            {
                                 bets.Add(bet);
+                                hasBet[i] = true;
+                            }
                             else
+                            {
                                 bets[i] = bet;
+                                hasBet[i] = true;
+                            }
                             Console.WriteLine();
-                        }
-                        else if (bet == 100)
-                        {
-                            if (passCount == 0)
-                            {
-                                bets.Add(bet);
-                                bets.Add(-1);
-                                bets.Add(-1);
-                                bets.Add(-1);
-                                bettingRoundEnded = true;
-                                break;
-                            }
-                            else if (passCount == 1)
-                            {
-                                bets.Add(bet);
-                                bets.Add(-1);
-                                bets.Add(-1);
-                                bettingRoundEnded = true;
-                                break;
-                            }
-                            else if (passCount == 2)
-                            {  
-                                bets.Add(bet);
-                                bets.Add(-1);
-                                bettingRoundEnded = true;
-                                break;
-                            }
-                            else
-                                continue;
                         }
                         else
                         {
@@ -187,7 +164,7 @@ namespace CardGame
                         Console.WriteLine("Invalid input");
                         i--;
                     }
-    
+
                     if (passCount >= 3)
                     {
                         Console.WriteLine("Betting round ends");
@@ -200,19 +177,40 @@ namespace CardGame
                         else
                         {
                             bets.Add(50);
+                            hasBet[i + 1] = true;
                             bettingRoundEnded = true;
                             break;
                         }
                     }
                 }
             }
-    
+            foreach (var i in hasBet) { Console.WriteLine(i); }
+            foreach (var i in bets) { Console.WriteLine(i); }
+
+
             // show betting results
             Console.WriteLine("\nBetting round complete, here are the results:");
             for (int i = 0; i < players.Count; i++)
             {
-                Console.WriteLine($"{players[i]} : {bets[i]}");
+                string result;
+                if (bets[i] == -1)
+                {
+                    result = hasBet[i] ? "Passed after betting" : "Passed";
+                }
+                else 
+                {
+                    result = $"Bet {bets[i]}";
+                }
+                Console.WriteLine($"{players[i]} : {result}");
             }
+
+
+            // index of highest bidder
+            Console.WriteLine();
+            var highestBidder = bets.Max();
+            int indexOfHighestBidder = bets.IndexOf(highestBidder);
+            Console.WriteLine($"{players[indexOfHighestBidder]} won the bid.");
+            
 
 
 
