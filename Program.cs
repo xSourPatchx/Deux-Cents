@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
 
 namespace CardGame
 {
@@ -10,16 +8,16 @@ namespace CardGame
         static void Main(string[] args)
         {
             // Will need below in unity, to check if card slot has a card or is empty once card are played
-            //bool[] playerOneAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
-            //bool[] playerTwoAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
-            //bool[] playerThreeAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
-            //bool[] playerFourAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
+            //bool[] playerOneDeckAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
+            //bool[] playerTwoDeckAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
+            //bool[] playerThreeDeckAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
+            //bool[] playerFourDeckAvailableCardSlot = { true, true, true, true, true, true, true, true, true, true };
 
 
             /* SECTION 1: INITIAL CARDS, SHUFFLE AND DEAL */
 
             Console.WriteLine("Shuffling and dealing cards...");
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
 
             // init list of objects
             List<Card> deck = new List<Card>();
@@ -72,43 +70,44 @@ namespace CardGame
             ShuffleDeck();
 
             // create 4 list for all 4 players 
-            List<Card> playerOne = new List<Card>();
-            List<Card> playerTwo = new List<Card>();
-            List<Card> playerThree = new List<Card>();
-            List<Card> playerFour = new List<Card>();
+            List<Card> playerOneDeck = new List<Card>();
+            List<Card> playerTwoDeck = new List<Card>();
+            List<Card> playerThreeDeck = new List<Card>();
+            List<Card> playerFourDeck = new List<Card>();
 
             for (int i = 0; i < (deck.Count); i += 4)
             {
-                playerOne.Add(deck[i]);
-                playerTwo.Add(deck[i + 1]);
-                playerThree.Add(deck[i + 2]);
-                playerFour.Add(deck[i + 3]);
+                playerOneDeck.Add(deck[i]);
+                playerTwoDeck.Add(deck[i + 1]);
+                playerThreeDeck.Add(deck[i + 2]);
+                playerFourDeck.Add(deck[i + 3]);
             }
 
             Console.WriteLine("\n#########################\n");
 
             Console.WriteLine("Player one's hand:\n");
-            foreach (Card player in playerOne) { Console.WriteLine(player); } // disp playerOne hand
+            foreach (Card player in playerOneDeck) { Console.WriteLine(player); } // disp playerOneDeck hand
 
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             Console.WriteLine("\nPlayer two's hand:\n");
-            foreach (Card player in playerTwo) { Console.WriteLine(player); } // disp playerTwo hand
+            foreach (Card player in playerTwoDeck) { Console.WriteLine(player); } // disp playerTwoDeck hand
 
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             Console.WriteLine("\nPlayer three's hand:\n");
-            foreach (Card player in playerThree) { Console.WriteLine(player); } // disp playerThree hand
+            foreach (Card player in playerThreeDeck) { Console.WriteLine(player); } // disp playerThreeDeck hand
 
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
 
             Console.WriteLine("\nPlayer four's hand:\n");
-            foreach (Card player in playerFour) { Console.WriteLine(player); } // disp playerFour hand
+            foreach (Card player in playerFourDeck) { Console.WriteLine(player); } // disp playerFourDeck hand
 
             Console.WriteLine("\n#########################\n");
 
 
             /* SECTION 2: BETTING ROUND */ // should make this a method
+
             Console.WriteLine("Betting round\n");
             //Thread.Sleep(1000);
 
@@ -117,6 +116,7 @@ namespace CardGame
             bool[] hasBet = new bool[players.Count]; // track if a player has ever place a bet
             int passCount = 0;
             bool bettingRoundEnded = false;
+            //foreach (var bet in hasBet) { Console.WriteLine(bet); }
 
             while (!bettingRoundEnded)
             {
@@ -126,9 +126,9 @@ namespace CardGame
                     { continue; }
 
                     Console.WriteLine($"{players[i]}, enter a bet (between 50-100, intervals of 5) or 'pass': ");
-                    string input = Console.ReadLine().ToLower();
+                    string betInput = Console.ReadLine().ToLower();
 
-                    if (input == "pass")
+                    if (betInput == "pass")
                     {
                         Console.WriteLine($"{players[i]} passed\n");
                         if (bets.Count <= i)
@@ -137,9 +137,9 @@ namespace CardGame
                             bets[i] = -1;
                         passCount++;
                     }
-                    else if (int.TryParse(input, out int bet))
+                    else if (int.TryParse(betInput, out int bet))
                     {
-                        if (bet >= 50 && bet < 100 && bet % 5 == 0 && !bets.Contains(bet))
+                        if (bet >= 50 && bet <= 100 && bet % 5 == 0 && !bets.Contains(bet))
                         {
                             if (bets.Count <= i)
                             {
@@ -184,8 +184,8 @@ namespace CardGame
                     }
                 }
             }
-            foreach (var i in hasBet) { Console.WriteLine(i); }
-            foreach (var i in bets) { Console.WriteLine(i); }
+            //foreach (var i in hasBet) { Console.WriteLine(i); }
+            //foreach (var i in bets) { Console.WriteLine(i); }
 
 
             // show betting results
@@ -205,12 +205,152 @@ namespace CardGame
             }
 
 
+            /* SECTION 3: TRUMP SUIT SELECTION */
+
+
             // index of highest bidder
             Console.WriteLine();
             var highestBidder = bets.Max();
             int indexOfHighestBidder = bets.IndexOf(highestBidder);
             Console.WriteLine($"{players[indexOfHighestBidder]} won the bid.");
+            Console.WriteLine();
+
+            Console.WriteLine($"{players[indexOfHighestBidder]}, please choose a trump suit. (enter \"clubs\", \"diamonds\", \"hearts\", \"spades\")");
+            string trumpSuit = Console.ReadLine().ToLower();
+
+            while (trumpSuit != "clubs" && trumpSuit != "diamonds" && trumpSuit != "hearts" && trumpSuit != "spades")
+            {
+                Console.WriteLine();
+                Console.WriteLine($"{trumpSuit} is an invalid input, please try again.");
+                trumpSuit = Console.ReadLine().ToLower();
+            }
+
+            Console.WriteLine($"Trump suit is {trumpSuit}.");
+            Console.WriteLine();
+
+            /* SECTION 4: ROUND PLAYING */
+            int teamOnePoints = 0;
+            int teamTwoPoints = 0;
+            List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
+
+            int currentPlayerIndex = indexOfHighestBidder; //set current index to index of player who won the bet
             
+
+            // for the first trick
+            for (int trick = 0; trick < 1; trick ++)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Trick #{trick + 1}:");
+
+                List<Card> currentTrick = new List<Card> (); // empty list to hold tricks
+                string leadingSuit = null;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    int playerIndex = (currentPlayerIndex + i) % 4; // ensuring player who won the bet goes first
+                    List<Card> playerDeck = playerDecks[playerIndex];
+
+                    // adding loop to validate user input
+                    int cardIndex = -1; // initializing invalid input
+                    bool validInput = false;
+                    while (!validInput)
+                    {
+                        Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1}):");
+                        for (int j = 0; j < playerDeck.Count; j++)
+                        {
+                            Console.WriteLine($"{j} : {playerDeck[j]}");
+                        }
+                        string Input = Console.ReadLine();
+                        if (int.TryParse(Input, out cardIndex) && cardIndex < playerDeck.Count && cardIndex >= 0)
+                        {
+                            validInput = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{cardIndex} is an invalid input, please try again.");
+                        }
+                    }
+
+                    Card playedCard = playerDeck[cardIndex];
+                    playerDeck.RemoveAt(cardIndex);
+
+                    if (i == 0)
+                    {
+                        leadingSuit =  playedCard.cardSuit;
+                    }
+
+                    currentTrick.Add(playedCard);
+                    Console.WriteLine($"{players[playerIndex]} played {playedCard}");
+                    Console.WriteLine();
+                    // left off here
+                    // need to find out who won the trick
+
+                }
+
+            }
+
+            /*
+            // for trick 1 to 9
+            for (int trick = 1; trick < 10; trick ++)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Trick #{trick + 1}:");
+
+                List<Card> currentTrick = new List<Card> (); // empty list to hold tricks
+                string leadingSuit = null;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    int playerIndex = (currentPlayerIndex + i) % 4; // ensuring player who won the bet goes first
+                    List<Card> playerDeck = playerDecks[playerIndex];
+
+                    // adding loop to validate user input
+                    int cardIndex = -1; // initializing invalid input
+                    bool validInput = false;
+                    while (!validInput)
+                    {
+                        Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1}):");
+                        for (int j = 0; j < playerDeck.Count; j++)
+                        {
+                            Console.WriteLine($"{j} : {playerDeck[j]}");
+                        }
+                        string Input = Console.ReadLine();
+                        if (int.TryParse(Input, out cardIndex) && cardIndex < playerDeck.Count && cardIndex >= 0)
+                        {
+                            validInput = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{cardIndex} is an invalid input, please try again.");
+                        }
+                    }
+
+                    Card playedCard = playerDeck[cardIndex];
+                    playerDeck.RemoveAt(cardIndex);
+
+                    if (i == 0)
+                    {
+                        leadingSuit =  playedCard.cardSuit;
+                    }
+
+                    currentTrick.Add(playedCard);
+                    Console.WriteLine($"{players[playerIndex]} played {playedCard}");
+                    Console.WriteLine();
+                    // left off here
+                    // need to find out who won the trick
+
+                }
+             */
+
+
+
+
+            // ******* seperate into seperate .cs file per object!!!!!
+            // Next steps
+            // -initiate team 1 and team 2 discard piles/points
+            // -should integrate pop method when card is played
+            // -push method when card are discarded
+            // -coint points at the end
 
 
 
@@ -248,13 +388,13 @@ namespace CardGame
             }
 
             // method to select winner of trick (not yet used)
-            Card TrickWinner(Card playerOneCard, Card playerTwoCard, Card playerThreeCard, Card playerFourCard)
+            Card TrickWinner(Card playerOneDeckCard, Card playerTwoDeckCard, Card playerThreeDeckCard, Card playerFourDeckCard)
             {
                 List<Card> trick = new List<Card>();
-                trick.Add(playerOneCard);
-                trick.Add(playerTwoCard);
-                trick.Add(playerThreeCard);
-                trick.Add(playerFourCard);
+                trick.Add(playerOneDeckCard);
+                trick.Add(playerTwoDeckCard);
+                trick.Add(playerThreeDeckCard);
+                trick.Add(playerFourDeckCard);
                 int maxVal = trick.Max(x => x.cardFaceValue);
                 Card maxCard = trick.First(x => x.cardFaceValue == maxVal);
                 return maxCard;
