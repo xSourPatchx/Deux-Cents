@@ -59,7 +59,23 @@ namespace CardGame
                         Console.WriteLine($"{j}: {playerDeck[j]}");
                     }
 
-                    int cardIndex = int.Parse(Console.ReadLine());
+                    int cardIndex = -1;
+                    bool validInput = false;
+
+                    while (!validInput)
+                    {
+                        string input = Console.ReadLine();
+
+                        if (int.TryParse(input, out cardIndex) && cardIndex >= 0 && cardIndex < playerDeck.Count)
+                        {
+                            validInput = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input. Please enter a valid index.");
+                        }
+                    }
+
                     Card playedCard = playerDeck[cardIndex];
                     playerDeck.RemoveAt(cardIndex);
 
