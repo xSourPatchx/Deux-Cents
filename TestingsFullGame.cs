@@ -50,7 +50,7 @@ namespace CardGame
                 // Each player plays a card
                 for (int i = 0; i < 4; i++)
                 {
-                    int playerIndex = (currentPlayerIndex + i) % 4;
+                    int playerIndex = (currentPlayerIndex + i) % 4; // Determine the current player
                     List<Card> playerDeck = playerDecks[playerIndex];
 
                     Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1}):");
