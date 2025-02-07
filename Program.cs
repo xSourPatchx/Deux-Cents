@@ -1,3 +1,132 @@
+/*using System.Collections.Generic;
+
+namespace CardGame
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Betting round\n");
+
+            List<string> players = new List<string> { "Player One", "Player Two", "Player Three", "Player Four" };
+            List<int> bets = new List<int>(); // store bets
+            bool[] hasBet = new bool[players.Count]; // track if a player has ever placed a bet
+            bool[] hasPassed = new bool[players.Count]; // track if a player has passed
+            //int passCount = 0;
+            bool bettingRoundEnded = false;
+
+            while (!bettingRoundEnded)
+            {
+                for (int i = 0; i < players.Count; i++)
+                {
+                    if (hasPassed[i])
+                    {
+                        continue; // Skip players who have already passed
+                    }
+
+                    Console.WriteLine($"{players[i]}, enter a bet (between 50-100, intervals of 5) or 'pass': ");
+                    string betInput = Console.ReadLine().ToLower();
+
+                    if (betInput == "pass")
+                    {
+                        Console.WriteLine($"{players[i]} passed\n");
+                        hasPassed[i] = true;
+                        if (bets.Count <= i)
+                            bets.Add(-1);
+                        else
+                            bets[i] = -1;
+                    }
+                    else if (int.TryParse(betInput, out int bet))
+                    {
+                        if (bet >= 50 && bet <= 100 && bet % 5 == 0 && !bets.Contains(bet))
+                        {
+                            if (bets.Count <= i)
+                            {
+                                bets.Add(bet);
+                            }
+                            else
+                            {
+                                bets[i] = bet;  
+                            }
+                            hasBet[i] = true;
+                            Console.WriteLine();
+
+                            // Check if the bet is 100
+                            if (bet == 100)
+                            {
+                                bettingRoundEnded = true; // End the betting round immediately
+                                Console.WriteLine($"{players[i]} bet 100. Betting round ends.\n");
+
+                                // Set all subsequent players who haven't placed a bet to -1
+                                for (int j = i + 1; j < players.Count; j++)
+                                {
+                                    if (j != i && !hasPassed[j])
+                                    {
+                                        hasPassed[j] = true;
+                                        if (bets.Count <= j)
+                                            bets.Add(-1);
+                                        else
+                                            bets[j] = -1;
+                                        Console.WriteLine($"{players[j]} automatically passes.\n");
+                                    }
+                                }
+                                break; // Exit the for loop
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid bet");
+                            i--;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input");
+                        i--;
+                    }
+
+                    // End the betting round if 3 players have passed
+                    if (hasPassed.Count(p => p) >= 3)
+                    {
+                        Console.WriteLine("Betting round ends");
+                        // Inserting default bet of 50 to player 4 if all prior players passed
+                        if (bets.Count == 4)
+                        {
+                            bettingRoundEnded = true;
+                            break;
+                        }
+                        else
+                        {
+                            bets.Add(50);
+                            hasBet[i + 1] = true;
+                            bettingRoundEnded = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Showing betting results
+            Console.WriteLine("\nBetting round complete, here are the results:");
+            for (int i = 0; i < players.Count; i++)
+            {
+                string result;
+                if (hasPassed[i])
+                {
+                    result = hasBet[i] ? "Passed after betting" : "Passed";
+                }
+                else
+                {
+                    result = $"Bet {bets[i]}";
+                }
+                Console.WriteLine($"{players[i]} : {result}");
+            }
+            Console.ReadKey();
+        }
+    }
+}
+*/
+
 using System;
 using System.Linq;
 
@@ -109,21 +238,22 @@ namespace CardGame
             /* SECTION 2: BETTING ROUND */ // should make this a method
 
             Console.WriteLine("Betting round\n");
-            //Thread.Sleep(1000);
 
             List<string> players = new List<string> { "Player One", "Player Two", "Player Three", "Player Four" };
             List<int> bets = new List<int>(); // store bets
-            bool[] hasBet = new bool[players.Count]; // track if a player has ever place a bet
-            int passCount = 0;
+            bool[] hasBet = new bool[players.Count]; // track if a player has ever placed a bet
+            bool[] hasPassed = new bool[players.Count]; // track if a player has passed
+            //int passCount = 0;
             bool bettingRoundEnded = false;
-            //foreach (var bet in hasBet) { Console.WriteLine(bet); }
 
             while (!bettingRoundEnded)
             {
-                for (int i = 0; i < (players.Count); i++)
+                for (int i = 0; i < players.Count; i++)
                 {
-                    if (bets.Count > i && bets[i] == -1)
-                    { continue; }
+                    if (hasPassed[i])
+                    {
+                        continue; // Skip players who have already passed
+                    }
 
                     Console.WriteLine($"{players[i]}, enter a bet (between 50-100, intervals of 5) or 'pass': ");
                     string betInput = Console.ReadLine().ToLower();
@@ -131,11 +261,11 @@ namespace CardGame
                     if (betInput == "pass")
                     {
                         Console.WriteLine($"{players[i]} passed\n");
+                        hasPassed[i] = true;
                         if (bets.Count <= i)
                             bets.Add(-1);
                         else
                             bets[i] = -1;
-                        passCount++;
                     }
                     else if (int.TryParse(betInput, out int bet))
                     {
@@ -144,14 +274,35 @@ namespace CardGame
                             if (bets.Count <= i)
                             {
                                 bets.Add(bet);
-                                hasBet[i] = true;
                             }
                             else
                             {
-                                bets[i] = bet;
-                                hasBet[i] = true;
+                                bets[i] = bet;  
                             }
+                            hasBet[i] = true;
                             Console.WriteLine();
+
+                            // Check if the bet is 100
+                            if (bet == 100)
+                            {
+                                bettingRoundEnded = true; // End the betting round immediately
+                                Console.WriteLine($"{players[i]} bet 100. Betting round ends.\n");
+
+                                // Set all subsequent players who haven't placed a bet to -1
+                                for (int j = i + 1; j < players.Count; j++)
+                                {
+                                    if (j != i && !hasPassed[j])
+                                    {
+                                        hasPassed[j] = true;
+                                        if (bets.Count <= j)
+                                            bets.Add(-1);
+                                        else
+                                            bets[j] = -1;
+                                        Console.WriteLine($"{players[j]} automatically passes.\n");
+                                    }
+                                }
+                                break; // Exit the for loop
+                            }
                         }
                         else
                         {
@@ -165,10 +316,11 @@ namespace CardGame
                         i--;
                     }
 
-                    if (passCount >= 3)
+                    // End the betting round if 3 players have passed
+                    if (hasPassed.Count(p => p) >= 3)
                     {
                         Console.WriteLine("Betting round ends");
-                        // inserting default bet of 50 to player 4 since all prior players passed.
+                        // Inserting default bet of 50 to player 4 if all prior players passed
                         if (bets.Count == 4)
                         {
                             bettingRoundEnded = true;
@@ -184,20 +336,17 @@ namespace CardGame
                     }
                 }
             }
-            //foreach (var i in hasBet) { Console.WriteLine(i); }
-            //foreach (var i in bets) { Console.WriteLine(i); }
 
-
-            // show betting results
+            // Showing betting results
             Console.WriteLine("\nBetting round complete, here are the results:");
             for (int i = 0; i < players.Count; i++)
             {
                 string result;
-                if (bets[i] == -1)
+                if (hasPassed[i])
                 {
                     result = hasBet[i] ? "Passed after betting" : "Passed";
                 }
-                else 
+                else
                 {
                     result = $"Bet {bets[i]}";
                 }
