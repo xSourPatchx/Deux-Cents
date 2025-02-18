@@ -248,7 +248,9 @@ namespace CardGame
             Console.WriteLine($"Trump suit is {trumpSuit}.");
             Console.WriteLine();
 
+            
             /* SECTION 4: ROUND PLAYING */
+
             int teamOnePoints = 0;
             int teamTwoPoints = 0;
             List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
@@ -257,7 +259,7 @@ namespace CardGame
             
 
             // for the first trick
-            for (int trick = 0; trick < 1; trick ++)
+            for (int trick = 0; trick < 10; trick ++)
             {
                 Console.WriteLine();
                 Console.WriteLine($"Trick #{trick + 1}:");
@@ -280,10 +282,28 @@ namespace CardGame
                         {
                             Console.WriteLine($"{j} : {playerDeck[j]}");
                         }
+
                         string Input = Console.ReadLine();
                         if (int.TryParse(Input, out cardIndex) && cardIndex < playerDeck.Count && cardIndex >= 0)
-                        {
-                            validInput = true;
+                        {                        
+                            if (i == 0)
+                            {
+                                validInput = true;
+                            }
+                            else
+                            {
+                                if (playerDeck[cardIndex].cardSuit != leadingSuit && playerDeck.Any(card => card.cardSuit == leadingSuit))
+                                {
+                                    Console.WriteLine();
+                                    Console.WriteLine($"You must play a card of ({leadingSuit}) since its in your deck, try again.");
+                                    Console.WriteLine();
+                                }
+                                else
+                                {
+                                    validInput = true;
+                                }
+
+                            }
                         }
                         else
                         {
@@ -297,18 +317,20 @@ namespace CardGame
                     if (i == 0)
                     {
                         leadingSuit =  playedCard.cardSuit;
+                        Console.WriteLine($"leading suit: {leadingSuit}");
                     }
 
                     currentTrick.Add(playedCard);
                     Console.WriteLine($"{players[playerIndex]} played {playedCard}");
                     Console.WriteLine();
+
                     // left off here
-                    // need to find out who won the trick
+                    // need to find out who won the trick, so that the winner of the trick plays next
+
 
                 }
 
             }
-
             /*
             // for trick 1 to 9
             for (int trick = 1; trick < 10; trick ++)
