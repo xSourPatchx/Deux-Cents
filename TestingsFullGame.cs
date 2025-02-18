@@ -68,7 +68,24 @@ namespace CardGame
 
                         if (int.TryParse(input, out cardIndex) && cardIndex >= 0 && cardIndex < playerDeck.Count)
                         {
-                            validInput = true;
+                            // Check if the player must follow the leading suit
+                            if (leadSuit != null && playerDeck.Any(card => card.cardSuit == leadSuit))
+                            {
+                                // Player must follow the leading suit
+                                if (playerDeck[cardIndex].cardSuit == leadSuit)
+                                {
+                                    validInput = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"You must play a card of the leading suit ({leadSuit}).");
+                                }
+                            }
+                            else
+                            {
+                                // Player can play any card
+                                validInput = true;
+                            }
                         }
                         else
                         {
