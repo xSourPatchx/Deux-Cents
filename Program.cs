@@ -277,7 +277,8 @@ namespace CardGame
                     bool validInput = false;
                     while (!validInput)
                     {
-                        Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1}):");
+                        // i think its here the bug where playerindex should be updated
+                        Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1} and leading suit is {leadingSuit}):");
                         for (int j = 0; j < playerDeck.Count; j++)
                         {
                             Console.WriteLine($"{j} : {playerDeck[j]}");
@@ -324,11 +325,45 @@ namespace CardGame
                     Console.WriteLine($"{players[playerIndex]} played {playedCard}");
                     Console.WriteLine();
 
-                    // left off here
-                    // need to find out who won the trick, so that the winner of the trick plays next
-
-
                 }
+
+                // Determine the winner of the trick
+                int winningCardIndex = 0;
+
+                // Console.WriteLine($"Card 1: {currentTrick[0].cardFace} of {currentTrick[0].cardSuit}");
+                // Console.WriteLine($"Card 2: {currentTrick[1].cardFace} of {currentTrick[1].cardSuit}");
+                // Console.WriteLine($"Card 3: {currentTrick[2].cardFace} of {currentTrick[2].cardSuit}");
+                // Console.WriteLine($"Card 4: {currentTrick[3].cardFace} of {currentTrick[3].cardSuit}");
+
+                for (int i = 1; i < 4; i++)
+                {
+                    // if trump suit is lead, highest card wins
+                    if(currentTrick[i].cardSuit == leadingSuit)
+                    {
+                        if(currentTrick[i].cardFaceValue > currentTrick[winningCardIndex].cardFaceValue)
+                        {
+                            winningCardIndex = i;
+                        }
+                    }
+                    else if (currentTrick[i].cardSuit != leadingSuit) 
+                    {
+                        if(currentTrick[winningCardIndex].cardSuit == trumpSuit && currentTrick[i].cardFaceValue > currentTrick[winningCardIndex].cardFaceValue)
+                        {
+                            Console.WriteLine($"ZINGGG {players[i]} just cut again!");
+                            winningCardIndex = i;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"ZINGGG {players[i]} just cut!");
+                            winningCardIndex = i;
+                        }
+                    }
+                }
+                // Console.WriteLine($"winner index: {winningCardIndex}");
+                currentPlayerIndex = winningCardIndex;
+                
+                // left off here
+                // BUG! test code out, seems like winner index does not work properly
 
             }
             /*
