@@ -231,7 +231,20 @@ namespace CardGame
             Console.WriteLine();
             var highestBidder = bets.Max();
             int indexOfHighestBidder = bets.IndexOf(highestBidder);
+
+            List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
+
             Console.WriteLine($"{players[indexOfHighestBidder]} won the bid.");
+
+            Console.WriteLine("\n#########################\n");
+
+            // show winning players deck
+            Console.WriteLine($"{players[indexOfHighestBidder]}'s hand:");
+            for (int j = 0; j < playerDecks[indexOfHighestBidder].Count; j++)
+                {
+                    Console.WriteLine($"{j} : {playerDecks[indexOfHighestBidder][j]}");
+                }
+
             Console.WriteLine();
 
             Console.WriteLine($"{players[indexOfHighestBidder]}, please choose a trump suit. (enter \"clubs\", \"diamonds\", \"hearts\", \"spades\")");
@@ -246,22 +259,20 @@ namespace CardGame
 
             Console.WriteLine();
             Console.WriteLine($"Trump suit is {trumpSuit}.");
-            Console.WriteLine();
-
 
             /* SECTION 4: ROUND PLAYING */
 
             int teamOnePoints = 0;
             int teamTwoPoints = 0;
-            List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
+            // List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
 
             int currentPlayerIndex = indexOfHighestBidder; //set current index to index of player who won the bet
 
 
-            // for the first trick
+            // for the 10 tricks
             for (int trick = 0; trick < 10; trick++)
             {
-                Console.WriteLine();
+                Console.WriteLine("\n#########################\n");
                 Console.WriteLine($"Trick #{trick + 1}:");
 
                 List<Card> currentTrick = new List<Card>(); // empty list to hold tricks
@@ -276,9 +287,8 @@ namespace CardGame
                     int cardIndex = -1; // initializing invalid input
                     bool validInput = false;
                     while (!validInput)
-                    {
-                        // i think its here the bug where playerindex should be updated
-                        Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1}, leading suit is {leadingSuit}and trump suit is {trumpSuit}):");
+                    {     
+                        Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1}, leading suit is {leadingSuit} and trump suit is {trumpSuit}):");
                         for (int j = 0; j < playerDeck.Count; j++)
                         {
                             Console.WriteLine($"{j} : {playerDeck[j]}");
@@ -317,7 +327,6 @@ namespace CardGame
                     if (i == 0)
                     {
                         leadingSuit = playedCard.cardSuit;
-                        //Console.WriteLine($"leading suit: {leadingSuit}");
                     }
 
                     currentTrick.Add(playedCard);
@@ -327,28 +336,26 @@ namespace CardGame
                 }
 
                 // Determine the winner of the trick
-
-
                 int winningCardIndex = 0;
-                Card winningCard = currentTrick[winningCardIndex];
+                //Card winningCard = currentTrick[winningCardIndex];
 
                 for (int i = 1; i < 4; i++)
                 {
-                    Card currentCard = currentTrick[i];
+                    //Card currentCard = currentTrick[i];
 
-                    // Check if the current card is a trump card and the winning card is not
-                    if (currentCard.cardSuit == trumpSuit && winningCard.cardSuit != trumpSuit)
+                    // Check if the current card is a trump card AND the winning card is not a trump card
+                    if (currentTrick[i].cardSuit == trumpSuit && currentTrick[winningCardIndex].cardSuit != trumpSuit)
                     {
-                        Console.WriteLine($"ZINGGG {players[i]} just cut!");
-                        winningCard = currentCard;
+                        Console.WriteLine($"ZINGGG {players[winningCardIndex]} just cut!");
+                        currentTrick[winningCardIndex] = currentTrick[i];
                         winningCardIndex = i;
                     }
                     // Check if both cards are trump cards or both are not trump cards
-                    else if (currentCard.cardSuit == winningCard.cardSuit)
+                    else if (currentTrick[i].cardSuit == currentTrick[winningCardIndex].cardSuit)
                     {
-                        if (currentCard.cardFaceValue > winningCard.cardFaceValue)
+                        if (currentTrick[i].cardFaceValue > currentTrick[winningCardIndex].cardFaceValue)
                         {
-                            winningCard = currentCard;
+                            currentTrick[winningCardIndex] = currentTrick[i];
                             winningCardIndex = i;
                         }
                     }
@@ -356,9 +363,11 @@ namespace CardGame
 
                 
                 int trickWinnerIndex = (currentPlayerIndex + winningCardIndex) % 4;
+                Console.WriteLine($"{players[trickWinnerIndex]} won the trick with {currentTrick[winningCardIndex]}");
                 currentPlayerIndex = trickWinnerIndex;
 
                 // left off here
+                // add a writeline to show who won the trick
                 // next steps, tally points
 
             }
