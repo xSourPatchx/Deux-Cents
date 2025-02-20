@@ -229,25 +229,25 @@ namespace CardGame
 
             // index of highest bidder
             Console.WriteLine();
-            var highestBidder = bets.Max();
-            int indexOfHighestBidder = bets.IndexOf(highestBidder);
+            var highestBid = bets.Max();
+            int indexOfhighestBid = bets.IndexOf(highestBid);
 
             List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
 
-            Console.WriteLine($"{players[indexOfHighestBidder]} won the bid.");
+            Console.WriteLine($"{players[indexOfhighestBid]} won the bid.");
 
             Console.WriteLine("\n#########################\n");
 
             // show winning players deck
-            Console.WriteLine($"{players[indexOfHighestBidder]}'s hand:");
-            for (int j = 0; j < playerDecks[indexOfHighestBidder].Count; j++)
-                {
-                    Console.WriteLine($"{j} : {playerDecks[indexOfHighestBidder][j]}");
-                }
+            Console.WriteLine($"{players[indexOfhighestBid]}'s hand:");
+            for (int j = 0; j < playerDecks[indexOfhighestBid].Count; j++)
+            {
+                Console.WriteLine($"{j} : {playerDecks[indexOfhighestBid][j]}");
+            }
 
             Console.WriteLine();
 
-            Console.WriteLine($"{players[indexOfHighestBidder]}, please choose a trump suit. (enter \"clubs\", \"diamonds\", \"hearts\", \"spades\")");
+            Console.WriteLine($"{players[indexOfhighestBid]}, please choose a trump suit. (enter \"clubs\", \"diamonds\", \"hearts\", \"spades\")");
             string trumpSuit = Console.ReadLine().ToLower();
 
             while (trumpSuit != "clubs" && trumpSuit != "diamonds" && trumpSuit != "hearts" && trumpSuit != "spades")
@@ -264,9 +264,10 @@ namespace CardGame
 
             int teamOnePoints = 0;
             int teamTwoPoints = 0;
+
             // List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
 
-            int currentPlayerIndex = indexOfHighestBidder; //set current index to index of player who won the bet
+            int currentPlayerIndex = indexOfhighestBid; //set current index to index of player who won the bet
 
 
             // for the 10 tricks
@@ -287,7 +288,7 @@ namespace CardGame
                     int cardIndex = -1; // initializing invalid input
                     bool validInput = false;
                     while (!validInput)
-                    {     
+                    {
                         Console.WriteLine($"{players[playerIndex]}, choose a card to play (enter index 0-{playerDeck.Count - 1}, leading suit is {leadingSuit} and trump suit is {trumpSuit}):");
                         for (int j = 0; j < playerDeck.Count; j++)
                         {
@@ -337,16 +338,12 @@ namespace CardGame
 
                 // Determine the winner of the trick
                 int winningCardIndex = 0;
-                //Card winningCard = currentTrick[winningCardIndex];
 
                 for (int i = 1; i < 4; i++)
                 {
-                    //Card currentCard = currentTrick[i];
-
                     // Check if the current card is a trump card AND the winning card is not a trump card
                     if (currentTrick[i].cardSuit == trumpSuit && currentTrick[winningCardIndex].cardSuit != trumpSuit)
                     {
-                        Console.WriteLine($"ZINGGG {players[winningCardIndex]} just cut!");
                         currentTrick[winningCardIndex] = currentTrick[i];
                         winningCardIndex = i;
                     }
@@ -356,21 +353,67 @@ namespace CardGame
                         if (currentTrick[i].cardFaceValue > currentTrick[winningCardIndex].cardFaceValue)
                         {
                             currentTrick[winningCardIndex] = currentTrick[i];
-                            winningCardIndex = i;
+                            winningCardIndex = i; 
                         }
                     }
                 }
 
-                
+
                 int trickWinnerIndex = (currentPlayerIndex + winningCardIndex) % 4;
                 Console.WriteLine($"{players[trickWinnerIndex]} won the trick with {currentTrick[winningCardIndex]}");
                 currentPlayerIndex = trickWinnerIndex;
 
-                // left off here
-                // add a writeline to show who won the trick
-                // next steps, tally points
+                //int teamOnePoints = 0;
+                //int teamTwoPoints = 0;
+
+                //adding all points to trickPoint
+                int trickPoints = currentTrick.Sum(card => card.cardPointValue);
+                if (trickWinnerIndex == 0 || trickWinnerIndex == 2)
+                {
+                    teamOnePoints += trickPoints;
+                }
+                else
+                {
+                    teamTwoPoints += trickPoints;
+                }
 
             }
+
+            // show score at the end of 10 tricks
+            Console.WriteLine("\nEnd of round scoring:");
+            Console.WriteLine($"Team One (Player 1 & Player 3) scored : {teamOnePoints}");
+            Console.WriteLine($"Team Two (Player 2 & Player 4) scored : {teamTwoPoints}");
+
+
+            // Check if the betting team made their bet
+            if (indexOfhighestBid == 0 || indexOfhighestBid == 2)
+            {
+                if (teamOnePoints >= highestBid)
+                {
+                    Console.WriteLine($"Team One made their bet of {highestBid} and gains {teamOnePoints} points.");
+                }
+                else
+                {
+                    Console.WriteLine($"Team One did not make their bet of {highestBid} and loses {highestBid} points.");
+                }
+            }
+            else
+            {
+                if (teamTwoPoints >= highestBid)
+                {
+                    Console.WriteLine($"Team Two made their bet of {highestBid} and gains {teamTwoPoints} points.");
+                }
+                else
+                {
+                    Console.WriteLine($"Team Two did not make their bet of {highestBid} and loses {highestBid} points.");
+                }
+            }
+
+
+            Console.ReadKey();
+
+            // left off here
+            // bug at line 369, points not adding properly
 
 
             // ******* seperate into seperate .cs file per object!!!!!
@@ -378,24 +421,9 @@ namespace CardGame
 
 
 
-
-
-            //// testing TrickWinner method below
-            //List<Card> testTrick = new List<Card>();
-            //for (int i = 0; i < 4; i++)
-            //{
-            //    testTrick.Add(deck[i]);
-            //}
-
-            //foreach (Card card in testTrick) { Console.WriteLine(card); }
-
-            //Console.WriteLine("\n#########################\n");
-
             //// call method to find winner of trick
             //Card cardwinner = TrickWinner(testTrick[0], testTrick[1], testTrick[2], testTrick[3]);
             //Console.WriteLine(cardwinner);
-
-            //Console.WriteLine("\n#########################\n");
 
 
             // method to shuffle deck
@@ -426,7 +454,6 @@ namespace CardGame
             //    return maxCard;
             //}
 
-            Console.ReadKey();
         }
     }
 
