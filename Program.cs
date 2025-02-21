@@ -265,7 +265,7 @@ namespace CardGame
             int teamOnePoints = 0;
             int teamTwoPoints = 0;
 
-            // List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists
+            // List<Card>[] playerDecks = { playerOneDeck, playerTwoDeck, playerThreeDeck, playerFourDeck }; // array of lists declared higher up
 
             int currentPlayerIndex = indexOfhighestBid; //set current index to index of player who won the bet
 
@@ -344,7 +344,7 @@ namespace CardGame
                     // Check if the current card is a trump card AND the winning card is not a trump card
                     if (currentTrick[i].cardSuit == trumpSuit && currentTrick[winningCardIndex].cardSuit != trumpSuit)
                     {
-                        currentTrick[winningCardIndex] = currentTrick[i];
+                        //currentTrick[winningCardIndex] = currentTrick[i];
                         winningCardIndex = i;
                     }
                     // Check if both cards are trump cards or both are not trump cards
@@ -352,7 +352,7 @@ namespace CardGame
                     {
                         if (currentTrick[i].cardFaceValue > currentTrick[winningCardIndex].cardFaceValue)
                         {
-                            currentTrick[winningCardIndex] = currentTrick[i];
+                            //currentTrick[winningCardIndex] = currentTrick[i];
                             winningCardIndex = i; 
                         }
                     }
@@ -363,27 +363,25 @@ namespace CardGame
                 Console.WriteLine($"{players[trickWinnerIndex]} won the trick with {currentTrick[winningCardIndex]}");
                 currentPlayerIndex = trickWinnerIndex;
 
-                //int teamOnePoints = 0;
-                //int teamTwoPoints = 0;
-
                 //adding all points to trickPoint
-                int trickPoints = currentTrick.Sum(card => card.cardPointValue);
+                int trickPoints = 0;
+                trickPoints = currentTrick.Sum(card => card.cardPointValue);
                 if (trickWinnerIndex == 0 || trickWinnerIndex == 2)
                 {
+                    Console.WriteLine($"{players[trickWinnerIndex]} collected {trickPoints} points for team 1");
                     teamOnePoints += trickPoints;
                 }
                 else
                 {
+                    Console.WriteLine($"{players[trickWinnerIndex]} collected {trickPoints} points for team 2");
                     teamTwoPoints += trickPoints;
                 }
-
             }
 
             // show score at the end of 10 tricks
             Console.WriteLine("\nEnd of round scoring:");
             Console.WriteLine($"Team One (Player 1 & Player 3) scored : {teamOnePoints}");
             Console.WriteLine($"Team Two (Player 2 & Player 4) scored : {teamTwoPoints}");
-
 
             // Check if the betting team made their bet
             if (indexOfhighestBid == 0 || indexOfhighestBid == 2)
@@ -409,15 +407,10 @@ namespace CardGame
                 }
             }
 
-
             Console.ReadKey();
 
-            // left off here
-            // bug at line 369, points not adding properly
-
-
-            // ******* seperate into seperate .cs file per object!!!!!
-            // ******* create methods for repeating code!!!!!
+            // ******* need to seperate into seperate .cs file per object!!!!!
+            // ******* need create methods for repeating code!!!!!
 
 
 
